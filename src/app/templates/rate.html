@@ -1,0 +1,32 @@
+<section id="by-type" class="home-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <div class="section-heading text-center">
+                        <div>
+                            <h2>Live Crypto Currencies Rates Updates</h2>
+                        </div>
+                        <p>Rates updated online</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8" style="min-width:700px">
+                    <h3 class="text-center">Live rates for <span class='blue'>{{currency}}</span></h3>
+                    <div id="chart" style="position: relative; height:400px; width:700px">
+                        <canvas baseChart id="baseChart" #baseChart width="700" height="400" [datasets]="barChartData" [labels]="barChartLabels"
+                            [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType" [colors]="barChartColors"
+                            (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4" style="margin-bottom: 10px" id="date-filters">
+
+                </div>
+            </div>
+    
+
+        </div>
+    </section>
