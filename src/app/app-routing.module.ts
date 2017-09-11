@@ -1,15 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { HomeComponent } from './home.component';
+import { RateComponent } from './rate.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    children: []
-  }
+  { path: '', component: HomeComponent },
+  { path: 'rates/:currency', component: RateComponent }
 ];
 
-@NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
-})
-export class AppRoutingModule { }
+export const routing = RouterModule.forRoot(routes);
