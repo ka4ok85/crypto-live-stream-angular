@@ -17,11 +17,17 @@ import EventSource from 'eventsource';
 export class RateComponent {
     
     public currency: string;
-    private apiURL = 'http://localhost:8080/stream';
+    private apiURL = 'http://localhost:8080/stream?currency=BTC';
 
     public rawData = [];
     public barChartData: Array<any> = [{ data: [] }];
     public barChartLabels: string[] = [];
+
+
+
+    public lineChartData: Array<any> = [{ data: [] }];
+    public lineChartLabels: Array<any> = [];
+
 
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
@@ -39,39 +45,15 @@ export class RateComponent {
 
         this.getData(this.currency, this.apiURL);
     }
-    public test2() {
-        console.log("test 2");
-    }
+
     public test(e) {
         
         let data = JSON.parse(e.data);
-        console.log(data);
-this.test2();
-//test();
 
         let dataLabels: string[] = [];
         let dataCounts: string[] = [];
-
-
-        let p : string;
-        let l : string;
-
-        l = ""+data.lastUpdate;
-        p = ""+data.price;
-
-        dataLabels.push(l);
-        dataCounts.push(p);
-
-        console.log( "11111");
-        console.log( data.lastUpdate);
-        console.log( data.price); 
-
-        console.log( "222");
-        console.log( dataCounts);
-        console.log( dataLabels);
-
-
-        this.buildBarChart(dataLabels, dataCounts);            
+        this.updateLineChart(data.lastUpdate, data.price);
+        //this.buildBarChart(dataLabels, dataCounts);            
 
 
 
@@ -130,34 +112,77 @@ this.test2();
     }
 
     /* CHARTS */
-    //private buildBarChart(labels: string[], dataCounts: string[]) {
-    public buildBarChart(labels: string[], dataCounts: string[]) {
-        console.log("buildBarChart running");
-        this.barChartData = [{ data: dataCounts, label: 'Number of calls per day' }];
-        let labelsCount = this.barChartLabels.length;
+    public updateLineChart(label: number, dataCount: number) {
+        console.log("updateLineChart running");
+
+        //console.log(this.lineChartData);
+        //console.log(this.lineChartData[0]);
+        let x: number[];
+        x = this.lineChartData[0].data;
+        //console.log(x);
+        x.push(dataCount);
+        console.log(x);
+
+        
+        let date = new Date(label*1000);
+
+        //new Date()
+        //console.log(label); 
+        console.log(date);
+        let year = date.getFullYear();
+        let month = this.pad(date.getMonth() + 1, 2);
+        let day = this.pad(date.getDate(), 2);
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let second = date.getSeconds();
+
+        let l = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+        console.log(l);
+
+        this.lineChartData = [{ data: x, label: 'Rate' }];
+        this.lineChartLabels.push(l);
+
+    }
+
+    private buildLineChart(labels: String[], dataCounts: String[]) {
+        this.lineChartData = [{ data: dataCounts, label: 'Number of 9-1-1 calls per day' }];
+        let labelsCount = this.lineChartLabels.length;
         for (var index = 0; index < labelsCount; index++) {
-            this.barChartLabels.pop();
+            this.lineChartLabels.pop();
         }
 
         for (let label of labels) {
-            this.barChartLabels.push(label);
+            this.lineChartLabels.push(label);
         }
     }
 
-    public barChartType: string = 'bar';
-    public barChartLegend: boolean = true;
-    public barChartOptions: any = {
-        scaleShowVerticalLines: false,
+    public lineChartOptions: any = {
         responsive: true,
         scales: {
+            xAxes: [{
+                type: 'time',
+                time: {
+                    //unit: 'second',
+                    displayFormats: {
+                        //day: 'YYYY-MM-DD HH:mm:ss'
+                        second: 'hh:mm:ss'
+                    }
+                }
+            }],
             yAxes: [{
                 ticks: {
-                    beginAtZero: true
+                    beginAtZero: false
                 }
             }]
         }
     };
-    public barChartColors: Array<any> = [
+
+    public lineChartType: string = 'line';
+    public chartClicked(e: any): void {
+    }
+    public chartHovered(e: any): void {
+    }
+    public lineChartColors: Array<any> = [
         {
             backgroundColor: 'rgba(0, 131, 154,0.2)',
             borderColor: 'rgba(0, 131, 154,1)',
@@ -167,8 +192,14 @@ this.test2();
             pointHoverBorderColor: 'rgba(0, 131, 154,0.8)'
         }
     ];
-    public chartClicked(e: any): void {
+    public lineChartLegend: boolean = true;
+
+
+    public pad(num: number, size: number): string {
+        var s = num + "";
+        while (s.length < size) s = "0" + s;
+        return s;
     }
-    public chartHovered(e: any): void {
-    }
+
+
 }
