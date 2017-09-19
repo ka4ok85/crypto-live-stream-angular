@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Http } from '@angular/http';
@@ -16,7 +16,7 @@ import { environment } from '../environments/environment';
 
 
 export class RateComponent {
-    
+
     public currency: string;
     theDataSource: Observable<string>;
 
@@ -33,27 +33,18 @@ export class RateComponent {
 
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
-        console.log(this.apiUrl);
-        console.log(this.currency);
     }
 
     ngOnInit() {
         this.route.data
-        .subscribe((data: { }) => {
-            this.titleService.setTitle('Rates for ' + this.currency + ' / USD');
-            this.apiHistoryUrl = this.apiUrl + this.apiHistoryUrlString + this.currency;
-        });
-
-        this.getHistoryData(this.currency, this.apiHistoryUrl);
-        /*
-        this.route.data
-            .subscribe((data: { }) => {
+            .subscribe((data: {}) => {
                 this.titleService.setTitle('Rates for ' + this.currency + ' / USD');
-                //this.apiURL = data.envSpecific.apiURL;
+                this.apiHistoryUrl = this.apiUrl + this.apiHistoryUrlString + this.currency;
+                this.apiStreamUrl = this.apiUrl + this.apiStreamUrlString + this.currency;
             });
 
-
-*/
+        this.getHistoryData(this.apiHistoryUrl);
+        this.getData(this.apiStreamUrl);
     }
 
     public processMessage(e) {
@@ -62,52 +53,24 @@ export class RateComponent {
         //this.busy = this.theDataSource.toPromise();
     }
 
-    public getHistoryData(currency: string, url: string) {
+    public getHistoryData(url: string) {
         console.log(url);
         this.theDataSource = this.http.get(url).map(res => res.json());
         this.rawData = [];
-        
-                // Get the data from the REST server
-                this.theDataSource.subscribe(
-                    data => {
-console.log(data);
-                        let dataLabels: string[] = [];
-                        let dataCounts: string[] = [];
-        
-                        for (let i = 0; i < data.length; i++) {
-                            this.rawData.push([data[i][0], data[i][1]]);
-                        }
-        
-                        this.rawData.sort(function (count1, count2) {
-                            if (count1[0] < count2[0]) {
-                                return 1;
-                            } else if (count1[0] > count2[0]) {
-                                return -1;
-                            } else {
-                                return 0;
-                            }
-                        });
-        
-                        let limit: number;
-                        if (this.rawData.length > 5) {
-                            limit = 5;
-                        } else {
-                            limit = this.rawData.length;
-                        }
-        
-                        for (let i = 0; i < limit; i++) {
-                            dataLabels.push(this.rawData[i][1]);
-                            dataCounts.push(this.rawData[i][0]);
-                        }
-        
-                        //this.buildBarChart(dataLabels, dataCounts);
-                    },
-                    err => console.log("Can't get Counts. Error code: %s, URL: %s ", err.status, err.url),
-                    () => console.log('Counts are retrieved')
-                );
+
+        // Get the data from the REST server
+        this.theDataSource.subscribe(
+            data => {
+                for (let i = 0; i < data.length; i++) {
+                    this.updateLineChart(data[i]['lastUpdate'], data[i]['price']);
+                }
+            },
+            err => console.log("Can't get History Rates. Error code: %s, URL: %s ", err.status, err.url),
+            () => console.log('History Rates were retrieved')
+        );
     }
 
-    public getData(currency: string, url: string) {
+    public getData(url: string) {
         var source = new EventSource(url);
         source.addEventListener("message", this.processMessage.bind(this), false);
     }
@@ -120,8 +83,8 @@ console.log(data);
         rates = this.lineChartData[0].data;
 
         rates.push(price);
-       
-        let date = new Date(timestamp*1000);
+
+        let date = new Date(timestamp * 1000);
 
         console.log("Date: " + date);
         let year = date.getFullYear();
@@ -138,19 +101,7 @@ console.log(data);
         this.lineChartLabels.push(l);
 
     }
-/*
-    private buildLineChart(labels: String[], dataCounts: String[]) {
-        this.lineChartData = [{ data: dataCounts, label: 'Number of 9-1-1 calls per day' }];
-        let labelsCount = this.lineChartLabels.length;
-        for (var index = 0; index < labelsCount; index++) {
-            this.lineChartLabels.pop();
-        }
 
-        for (let label of labels) {
-            this.lineChartLabels.push(label);
-        }
-    }
-*/
     public lineChartOptions: any = {
         responsive: true,
         scales: {
