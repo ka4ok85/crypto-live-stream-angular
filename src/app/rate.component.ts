@@ -95,9 +95,9 @@ export class RateComponent {
         let year = date.getFullYear();
         let month = this.pad(date.getMonth() + 1, 2);
         let day = this.pad(date.getDate(), 2);
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-        let second = date.getSeconds();
+        let hour = this.pad(date.getHours(), 2);
+        let minute = this.pad(date.getMinutes(), 2);
+        let second = this.pad(date.getSeconds(), 2);
 
         let l = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
         console.log(l);
