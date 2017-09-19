@@ -31,6 +31,10 @@ export class RateComponent {
     public lineChartData: Array<any> = [{ data: [] }];
     public lineChartLabels: Array<any> = [];
 
+    public historyChartData: Array<any> = [{ data: [] }];
+    public historyChartLabels: Array<any> = [];
+    
+
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
     }
@@ -49,7 +53,7 @@ export class RateComponent {
 
     public processMessage(e) {
         let data = JSON.parse(e.data);
-        this.updateLineChart(data.lastUpdate, data.price);
+        this.updateLineChart(data.lastUpdate, data.price, 'live');
         //this.busy = this.theDataSource.toPromise();
     }
 
@@ -62,7 +66,7 @@ export class RateComponent {
         this.theDataSource.subscribe(
             data => {
                 for (let i = 0; i < data.length; i++) {
-                    this.updateLineChart(data[i]['lastUpdate'], data[i]['price']);
+                    this.updateLineChart(data[i]['lastUpdate'], data[i]['price'], 'history');
                 }
             },
             err => console.log("Can't get History Rates. Error code: %s, URL: %s ", err.status, err.url),
@@ -71,12 +75,13 @@ export class RateComponent {
     }
 
     public getData(url: string) {
+        console.log(url);
         var source = new EventSource(url);
         source.addEventListener("message", this.processMessage.bind(this), false);
     }
 
     /* CHARTS */
-    public updateLineChart(timestamp: number, price: number) {
+    public updateLineChart(timestamp: number, price: number, graphType: string) {
         console.log("updateLineChart running");
 
         let rates: number[];
@@ -97,8 +102,14 @@ export class RateComponent {
         let l = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
         console.log(l);
 
-        this.lineChartData = [{ data: rates, label: 'Live Rate' }];
-        this.lineChartLabels.push(l);
+        if (graphType == 'live') {
+            this.lineChartData = [{ data: rates, label: 'Live Rate' }];
+            this.lineChartLabels.push(l);
+        } else {
+            this.historyChartData = [{ data: rates, label: 'History Rate' }];
+            this.historyChartLabels.push(l);
+        }
+
 
     }
 
