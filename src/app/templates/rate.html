@@ -14,22 +14,23 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-8" style="min-width:700px">
-                <h3 class="text-center">Live rates for <span class='blue'>{{currency}}</span></h3>
-                <div id="chart" style="position: relative; height:400px; width:700px">
-                    <canvas baseChart id="baseChart" #baseChart width="700" height="400" [datasets]="lineChartData" [labels]="lineChartLabels"
-                        [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
-                        (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
-                    </canvas>
-                </div>
-
-
-            </div>
-            <div class="col-md-4" style="margin-bottom: 10px" id="date-filters">
-
+            <h3 class="text-center">History rates for <span class='blue'>{{currency}}</span></h3>
+            <div id="chart" style="position: relative; height:400px; width:900px">
+                <canvas baseChart id="baseChart" #baseChart width="900" height="400" [datasets]="historyChartData" [labels]="historyChartLabels"
+                    [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+                    (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
+                </canvas>
             </div>
         </div>
-
+        <div class="row">
+            <h3 class="text-center">Live rates for <span class='blue'>{{currency}}</span></h3>
+            <div id="chart" style="position: relative; height:400px; width:900px">
+                <canvas baseChart id="baseChart" #baseChart width="900" height="400" [datasets]="lineChartData" [labels]="lineChartLabels"
+                    [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
+                    (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
+                </canvas>
+            </div>
+        </div>
 
     </div>
 </section>
