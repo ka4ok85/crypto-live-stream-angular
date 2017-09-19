@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { environment } from '../environments/environment';
 
 @Component({
     selector: '',
@@ -10,12 +9,6 @@ import { environment } from '../environments/environment';
 export class HomeComponent {
 
     ngOnInit() {
-        console.log("start");
-        console.log("1");
-        let apiUrl = environment.apiUrl;
-        console.log(apiUrl);
-        console.log("end");
     }
-
 
 }
