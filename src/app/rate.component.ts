@@ -33,7 +33,7 @@ export class RateComponent {
 
     public historyChartData: Array<any> = [{ data: [] }];
     public historyChartLabels: Array<any> = [];
-    
+
 
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
@@ -92,6 +92,7 @@ export class RateComponent {
         let date = new Date(timestamp * 1000);
 
         console.log("Date: " + date);
+        console.log("price: " + price);
         let year = date.getFullYear();
         let month = this.pad(date.getMonth() + 1, 2);
         let day = this.pad(date.getDate(), 2);
@@ -99,15 +100,14 @@ export class RateComponent {
         let minute = this.pad(date.getMinutes(), 2);
         let second = this.pad(date.getSeconds(), 2);
 
-        let l = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-        console.log(l);
+        let dateFormatted = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
 
         if (graphType == 'live') {
             this.lineChartData = [{ data: rates, label: 'Live Rate' }];
-            this.lineChartLabels.push(l);
+            this.lineChartLabels.push(dateFormatted);
         } else {
             this.historyChartData = [{ data: rates, label: 'History Rate' }];
-            this.historyChartLabels.push(l);
+            this.historyChartLabels.push(dateFormatted);
         }
 
 
