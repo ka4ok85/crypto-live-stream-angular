@@ -34,7 +34,9 @@ export class RateComponent {
     public historyChartData: Array<any> = [{ data: [] }];
     public historyChartLabels: Array<any> = [];
 
-
+    public historyVolumeChartData: Array<any> = [{ data: [] }];
+    public historyVolumeChartLabels: Array<any> = [];
+    
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
     }
@@ -83,11 +85,20 @@ export class RateComponent {
     /* CHARTS */
     public updateLineChart(timestamp: number, price: number, graphType: string) {
         console.log("updateLineChart running");
+        let liveRates: number[] = [];
+        let historyRates: number[] = [];
+        let historyVolumes: number[] = [];
 
-        let rates: number[];
-        rates = this.lineChartData[0].data;
-
-        rates.push(price);
+        if (graphType == 'live') {
+            liveRates = this.lineChartData[0].data;
+            liveRates.push(price);
+        } else if (graphType == 'history') {
+            historyRates = this.lineChartData[0].data;
+            historyRates.push(price);
+        } else if (graphType == 'history_volume') {
+            historyVolumes = this.historyVolumeChartData[0].data;
+            historyVolumes.push(price);
+        }
 
         let date = new Date(timestamp * 1000);
 
@@ -103,11 +114,14 @@ export class RateComponent {
         let dateFormatted = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
 
         if (graphType == 'live') {
-            this.lineChartData = [{ data: rates, label: 'Live Rate' }];
+            this.lineChartData = [{ data: liveRates, label: 'Live Rate' }];
             this.lineChartLabels.push(dateFormatted);
-        } else {
-            this.historyChartData = [{ data: rates, label: 'History Rate' }];
+        } else if (graphType == 'history') {
+            this.historyChartData = [{ data: historyRates, label: 'History Rate' }];
             this.historyChartLabels.push(dateFormatted);
+        } else if (graphType == 'history_volume') {
+            this.historyVolumeChartData = [{ data: historyVolumes, label: 'History Rate' }];
+            this.historyVolumeChartLabels.push(dateFormatted);
         }
 
 
