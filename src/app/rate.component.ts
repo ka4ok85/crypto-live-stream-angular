@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import { Observable } from "rxjs/Observable";
 import EventSource from 'eventsource';
 import { environment } from '../environments/environment';
+import { Rate } from './models/rate';
 
 
 @Component({
@@ -53,9 +54,16 @@ export class RateComponent {
         this.getData(this.apiStreamUrl);
     }
 
+    public t (s: string) {
+        let r: Rate;
+        //r.exchangeName = s.exchangeName;
+
+        return r;
+    }
+
     public processMessage(e) {
         let data = JSON.parse(e.data);
-        this.updateLineChart(data.lastUpdate, data.price, 'live');
+        //this.updateLineChart(data.lastUpdate, data.price, 'live');
         //this.busy = this.theDataSource.toPromise();
     }
 
@@ -64,16 +72,48 @@ export class RateComponent {
         this.theDataSource = this.http.get(url).map(res => res.json());
         this.rawData = [];
 
-        // Get the data from the REST server
         this.theDataSource.subscribe(
             data => {
+                //console.log(data)
                 for (let i = 0; i < data.length; i++) {
-                    this.updateLineChart(data[i]['lastUpdate'], data[i]['price'], 'history');
+                    let rate:Rate = new Rate(
+                        data[i]['exchangeName'],
+                        data[i]['fromCurrency'],
+                        data[i]['toCurrency'],
+                        data[i]['flag'],
+                        data[i]['price'],
+                        data[i]['lastUpdate'],
+                        data[i]['volume24h'],
+                        data[i]['volume24hTo']
+                    );
+
+                    console.log(rate);
+                    this.updateLineChart(rate, 'history');
+
                 }
             },
             err => console.log("Can't get History Rates. Error code: %s, URL: %s ", err.status, err.url),
             () => console.log('History Rates were retrieved')
         );
+        // Get the data from the REST server
+/*
+        this.theDataSource.subscribe
+        
+        (
+            data => {
+                result => this.result =result.json()
+                for (let i = 0; i < data.length; i++) {
+                    //this.updateLineChart(data[i]['lastUpdate'], data[i]['price'], 'history');
+                    //.map(response => response.json() as DeiInstance[])
+
+
+                    this.updateLineChart(data[i], 'history');
+                }
+            },
+            err => console.log("Can't get History Rates. Error code: %s, URL: %s ", err.status, err.url),
+            () => console.log('History Rates were retrieved')
+            */
+
     }
 
     public getData(url: string) {
@@ -83,6 +123,53 @@ export class RateComponent {
     }
 
     /* CHARTS */
+    public updateLineChart(rate: Rate, graphType: string) {
+
+
+        console.log("updateLineChart running");
+        let liveRates: number[] = [];
+        let historyRates: number[] = [];
+        let historyVolumes: number[] = [];
+
+        if (graphType == 'live') {
+            liveRates = this.lineChartData[0].data;
+            liveRates.push(rate.price);
+        } else if (graphType == 'history') {
+            historyRates = this.lineChartData[0].data;
+            historyRates.push(rate.price);
+            historyVolumes = this.historyVolumeChartData[0].data;
+            historyVolumes.push(rate.volume24h);
+        }
+
+        let date = new Date(rate.lastUpdate * 1000);
+
+        console.log("Date: " + date);
+        console.log("price: " + rate.price);
+        console.log("volume: " + rate.volume24h);
+        let year = date.getFullYear();
+        let month = this.pad(date.getMonth() + 1, 2);
+        let day = this.pad(date.getDate(), 2);
+        let hour = this.pad(date.getHours(), 2);
+        let minute = this.pad(date.getMinutes(), 2);
+        let second = this.pad(date.getSeconds(), 2);
+
+        let dateFormatted = year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+
+        if (graphType == 'live') {
+            this.lineChartData = [{ data: liveRates, label: 'Live Rate' }];
+            this.lineChartLabels.push(dateFormatted);
+        } else if (graphType == 'history') {
+            this.historyChartData = [{ data: historyRates, label: 'History Rate' }];
+            this.historyChartLabels.push(dateFormatted);
+            this.historyVolumeChartData = [{ data: historyVolumes, label: 'History Rate' }];
+            this.historyVolumeChartLabels.push(dateFormatted);
+        } else if (graphType == 'history_volume') {
+
+        }
+
+
+    }
+    /*
     public updateLineChart(timestamp: number, price: number, graphType: string) {
         console.log("updateLineChart running");
         let liveRates: number[] = [];
@@ -95,9 +182,10 @@ export class RateComponent {
         } else if (graphType == 'history') {
             historyRates = this.lineChartData[0].data;
             historyRates.push(price);
-        } else if (graphType == 'history_volume') {
             historyVolumes = this.historyVolumeChartData[0].data;
             historyVolumes.push(price);
+        } else if (graphType == 'history_volume') {
+
         }
 
         let date = new Date(timestamp * 1000);
@@ -119,14 +207,15 @@ export class RateComponent {
         } else if (graphType == 'history') {
             this.historyChartData = [{ data: historyRates, label: 'History Rate' }];
             this.historyChartLabels.push(dateFormatted);
-        } else if (graphType == 'history_volume') {
             this.historyVolumeChartData = [{ data: historyVolumes, label: 'History Rate' }];
             this.historyVolumeChartLabels.push(dateFormatted);
+        } else if (graphType == 'history_volume') {
+
         }
 
 
     }
-
+*/
     public lineChartOptions: any = {
         responsive: true,
         scales: {
