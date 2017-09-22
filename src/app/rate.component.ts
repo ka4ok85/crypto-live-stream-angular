@@ -36,6 +36,9 @@ export class RateComponent {
     public historyVolumeChartData: Array<any> = [{ data: [] }];
     public historyVolumeChartLabels: Array<any> = [];
 
+    public liveVolumeChartData: Array<any> = [{ data: [] }];
+    public liveVolumeChartLabels: Array<any> = [];
+
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
     }
@@ -96,13 +99,15 @@ export class RateComponent {
     public updateLineChart(rate: Rate, graphType: string) {
         console.log("updateLineChart running");
         let liveRates: number[] = [];
+        let liveVolumes: number[] = [];
         let historyRates: number[] = [];
         let historyVolumes: number[] = [];
 
         if (graphType == 'live') {
             liveRates = this.lineChartData[0].data;
-            console.log(liveRates);
             liveRates.push(rate.price);
+            liveVolumes = this.liveVolumeChartData[0].data;
+            liveVolumes.push(rate.volume24h);
         } else if (graphType == 'history') {
             historyRates = this.historyChartData[0].data;
             historyRates.push(rate.price);
@@ -127,10 +132,12 @@ export class RateComponent {
         if (graphType == 'live') {
             this.lineChartData = [{ data: liveRates, label: 'Live Rate' }];
             this.lineChartLabels.push(dateFormatted);
+            this.liveVolumeChartData = [{ data: liveVolumes, label: 'Live Volumes' }];
+            this.liveVolumeChartLabels.push(dateFormatted);
         } else if (graphType == 'history') {
             this.historyChartData = [{ data: historyRates, label: 'History Rate' }];
             this.historyChartLabels.push(dateFormatted);
-            this.historyVolumeChartData = [{ data: historyVolumes, label: 'History Rate' }];
+            this.historyVolumeChartData = [{ data: historyVolumes, label: 'History Volumes' }];
             this.historyVolumeChartLabels.push(dateFormatted);
         }
     }
