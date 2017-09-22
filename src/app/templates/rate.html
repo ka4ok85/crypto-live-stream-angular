@@ -41,9 +41,9 @@
             </div>
         </div>
         <div class="row">
-            <h3 class="text-center">History volumes for <span class='blue'>{{currency}}</span></h3>
+            <h3 class="text-center">Live volumes for <span class='blue'>{{currency}}</span></h3>
             <div id="chart" style="position: relative; height:400px; width:900px">
-                <canvas baseChart id="baseChart" #baseChart width="900" height="400" [datasets]="historyVolumeChartData" [labels]="historyVolumeChartLabels"
+                <canvas baseChart id="baseChart" #baseChart width="900" height="400" [datasets]="liveVolumeChartData" [labels]="liveVolumeChartLabels"
                     [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType"
                     (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)">
                 </canvas>
