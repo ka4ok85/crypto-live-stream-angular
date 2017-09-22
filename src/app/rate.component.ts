@@ -8,13 +8,11 @@ import EventSource from 'eventsource';
 import { environment } from '../environments/environment';
 import { Rate } from './models/rate';
 
-
 @Component({
     selector: '',
     templateUrl: './templates/rate.html',
     styles: ['']
 })
-
 
 export class RateComponent {
 
@@ -37,7 +35,7 @@ export class RateComponent {
 
     public historyVolumeChartData: Array<any> = [{ data: [] }];
     public historyVolumeChartLabels: Array<any> = [];
-    
+
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
     }
@@ -56,10 +54,7 @@ export class RateComponent {
 
     public processMessage(e) {
         let data = JSON.parse(e.data);
-        console.log("data");
-        console.log(data);
         this.updateLineChart(data, 'live');
-        //this.updateLineChart(data.lastUpdate, data.price, 'live');
         //this.busy = this.theDataSource.toPromise();
     }
 
@@ -72,7 +67,7 @@ export class RateComponent {
         this.theDataSource.subscribe(
             data => {
                 for (let i = 0; i < data.length; i++) {
-                    let rate:Rate = new Rate(
+                    let rate: Rate = new Rate(
                         data[i]['exchangeName'],
                         data[i]['fromCurrency'],
                         data[i]['toCurrency'],
@@ -137,11 +132,7 @@ export class RateComponent {
             this.historyChartLabels.push(dateFormatted);
             this.historyVolumeChartData = [{ data: historyVolumes, label: 'History Rate' }];
             this.historyVolumeChartLabels.push(dateFormatted);
-        } else if (graphType == 'history_volume') {
-
         }
-
-
     }
 
     public lineChartOptions: any = {
@@ -187,6 +178,5 @@ export class RateComponent {
         while (s.length < size) s = "0" + s;
         return s;
     }
-
 
 }
