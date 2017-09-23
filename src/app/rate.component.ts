@@ -39,6 +39,9 @@ export class RateComponent {
     public liveVolumeChartData: Array<any> = [{ data: [] }];
     public liveVolumeChartLabels: Array<any> = [];
 
+    public liveRate: number;
+    public liveRateChange: number;
+
     constructor(private http: Http, private route: ActivatedRoute, private titleService: Title) {
         this.currency = route.snapshot.paramMap.get('currency');
     }
@@ -58,6 +61,7 @@ export class RateComponent {
     public processMessage(e) {
         let data = JSON.parse(e.data);
         this.updateLineChart(data, 'live');
+        this.liveRate = data.price;
         //this.busy = this.theDataSource.toPromise();
     }
 
