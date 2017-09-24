@@ -1,4 +1,4 @@
-import { BrowserModule, Title }  from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from "@angular/router";
 
@@ -9,6 +9,7 @@ import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
+import { BusyModule } from 'angular2-busy';
 
 import { ChartsModule } from 'ng2-charts/ng2-charts';
 import 'chart.js/src/chart.js';
@@ -26,14 +27,15 @@ import { routing } from "./app-routing.module";
   ],
   imports: [
     BrowserModule,
-    RouterModule, 
-    routing, 
-    ChartsModule, 
-    HttpModule, 
-    FormsModule, 
-    ReactiveFormsModule, 
-    BrowserAnimationsModule, 
-    Angulartics2Module.forRoot([ Angulartics2GoogleAnalytics ]),
+    RouterModule,
+    routing,
+    ChartsModule,
+    HttpModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    BusyModule,
+    Angulartics2Module.forRoot([Angulartics2GoogleAnalytics]),
     Angulartics2Module.forChild()
   ],
   providers: [{ provide: LocationStrategy, useClass: PathLocationStrategy }, Title],
