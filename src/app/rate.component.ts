@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
+import { Subscription } from 'rxjs';
 import { Observable } from "rxjs/Observable";
 import EventSource from 'eventsource';
 import { environment } from '../environments/environment';
@@ -19,13 +21,14 @@ export class RateComponent {
     public currency: string;
     theDataSource: Observable<string>;
 
+    //busy: Subscription;
+    busy: Promise<any>;
+
     private apiUrl = environment.apiUrl;
     private apiStreamUrlString = "stream?currency=";
     private apiHistoryUrlString = "last?currency=";
     private apiStreamUrl = "";
     private apiHistoryUrl = "";
-
-    public rawData = [];
 
     public lineChartData: Array<any> = [{ data: [] }];
     public lineChartLabels: Array<any> = [];
@@ -62,14 +65,12 @@ export class RateComponent {
         let data = JSON.parse(e.data);
         this.updateLineChart(data, 'live');
         this.liveRate = data.price;
-        //this.busy = this.theDataSource.toPromise();
     }
 
     public getHistoryData(url: string) {
         console.log(url);
         this.theDataSource = this.http.get(url).map(res => res.json());
-        this.rawData = [];
-
+        this.busy = this.theDataSource.toPromise();
         // Get the data from the REST server
         this.theDataSource.subscribe(
             data => {
@@ -96,7 +97,10 @@ export class RateComponent {
     public getData(url: string) {
         console.log(url);
         var source = new EventSource(url);
+        //source.toPromise();
         source.addEventListener("message", this.processMessage.bind(this), false);
+        //this.busy = source.toPromise();
+        //this.busy = this.http.get('...').subscribe();
     }
 
     /* CHARTS */
