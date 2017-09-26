@@ -12,13 +12,25 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="row">
-            <h4>Current Rate: <span class='blue'><strong>1 <span [ngSwitch]="currency"><span *ngSwitchCase="'BTC'" >BTC <i class="fa fa-btc"></i></span><span *ngSwitchCase="'ETH'" >ETH Ξ</span><span *ngSwitchDefault >Unit</span></span> = {{liveRate}} &#036;</strong></span></h4>
-        </div>
-    </div>
     
     <div class="container">
+    </div>
+
+    <div class="container">
+        <div class="row">
+                <div [routerLinkActive]="['active']"><a href="#home" [routerLink]="['/']">&laquo; Back to Currency List</a></div>
+        </div>
+
+        <div class="row">&nbsp;</div>
+
+        <div class="row">
+            <h4>Current Rate: <span class='blue'><strong>1 <span [ngSwitch]="currency"><span *ngSwitchCase="'BTC'" >BTC <i class="fa fa-btc"></i></span>
+                <span
+                    *ngSwitchCase="'ETH'">ETH Ξ</span><span *ngSwitchDefault>Unit</span></span> = {{liveRate}} &#036;</strong>
+                    </span>
+            </h4>
+        </div>
+
         <div class="row">
             <h3 class="text-center">History rates for <span class='blue'>{{currency}}</span></h3>
             <div [ngBusy]="busy"></div>
